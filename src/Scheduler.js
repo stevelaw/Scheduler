@@ -27,7 +27,7 @@
 			console.log(str);
 		}
 	};
-	
+
 	/*
 	 * Error helper.
 	 */
@@ -113,11 +113,16 @@
 
 			this.state = this.STATES.RUNNING;
 
-			for ( var i = 0, len = this.fns.length; i < len; i++) {
-				var fn = this.fns[i];
+			// Used to solve the closure-in-the-loop problem.
+			var callbacker = function(fn) {
 				setTimeout(function() {
 					fn();
 				}, 0);
+			};
+
+			// Loop through each callback and execute.
+			for ( var i = 0, len = this.fns.length; i < len; i++) {
+				callbacker(this.fns[i]);
 			}
 
 			this.state = this.STATES.SCHEDULED;
