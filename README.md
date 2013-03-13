@@ -12,22 +12,17 @@ None
 addJob(options, replace)
 	where 
 		options.name
-			Job name
-			
+			Job name			
 		options.interval
-			Interval How often the job should run
-			
+			Interval How often the job should run			
 		options.fn
 			Single function reference or array of references to be called
-			when the timer fires.
-			
+			when the timer fires.			
 		options.immediate
-			Execute the function immediately.
-			
+			Execute the function immediately.			
 		options.persist
 			Prevents job from being paused via pauseAllJobs() or 
-			removeAllJobs() methods.
-		  
+			removeAllJobs() methods.		  
 		 replace
 			If a job by the name already exists, then replace it. Defaults to 
 			false.
