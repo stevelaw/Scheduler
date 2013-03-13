@@ -76,12 +76,13 @@ describe("Scheduler", function() {
 		var fired = 0;
 		var interval = 500;
 		var jobName = "SingleCallbackOnce";
+		var success = false;
 
 		var callback = function() {
 			fired++;
 			
 			if(fired === 5) {
-				scheduler.removeJob(jobName);
+				success = scheduler.removeJob(jobName);
 			}
 		};
 
@@ -97,31 +98,29 @@ describe("Scheduler", function() {
 
 		runs(function() {
 			expect(fired).toEqual(5);
+			expect(success).toEqual(true);
 		});
 	});
 	
-	it('can add a job and call single callback multiple times', function() {
+	it('can add a job and call multiple callbacks multiple times', function() {
 		var fired1 = 0, fired2 = 0;
 		var interval = 500;
 		var jobName = "MultiCallbackMulti";
+		var success = false;
 
 		var callback1 = function() {
-			console.log('callback1');
-			
 			fired1++;
 			
 			if(fired1 + fired2 === 10) {
-				scheduler.removeJob(jobName);
+				success = scheduler.removeJob(jobName);
 			}
 		};
 		
 		var callback2 = function() {
-			console.log('callback2');
-			
 			fired2++;
 			
 			if(fired1 + fired2 === 10) {
-				scheduler.removeJob(jobName);
+				success = scheduler.removeJob(jobName);
 			}
 		};
 
@@ -138,6 +137,7 @@ describe("Scheduler", function() {
 		runs(function() {
 			expect(fired1).toEqual(5);
 			expect(fired2).toEqual(5);
+			expect(success).toEqual(true);
 		});
 	});
 });
