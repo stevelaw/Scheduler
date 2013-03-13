@@ -19,10 +19,20 @@
 
 	var debug = options.debug || false;
 
+	/*
+	 * Log helper.
+	 */
 	var log = function(str) {
 		if (debug && console && console.log) {
 			console.log(str);
 		}
+	};
+	
+	/*
+	 * Error helper.
+	 */
+	var throwError = function(message) {
+		throw new Error(message);
 	};
 
 	/*
@@ -38,11 +48,11 @@
 	var Job = function(options) {
 		// Validation
 		if (typeof options.name === 'undefined') {
-			throw Error("Job name is required");
+			throwError("Job name is required");
 		}
 
 		if (typeof options.fn === 'undefined') {
-			throw Error("Job callbacks are required");
+			throwError("Job callbacks are required");
 		}
 
 		this.state = this.STATES.INIT;
