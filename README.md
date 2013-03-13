@@ -2,6 +2,12 @@
 
 A simple job scheduler for managing periodic jobs.
 
+## Features
+
+* Uses human-friendly strings for managing jobs.
+* Universal Module (UMD), supporting traditional browser environments, common script loaders (ie. RequireJS), and Node environment.
+* Comprehensive Jasmine Tests
+
 ## Dependencies
 
 None
