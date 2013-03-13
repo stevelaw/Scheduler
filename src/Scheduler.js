@@ -50,6 +50,7 @@
 		this.interval = options.interval;
 		this.immediate = options.immediate || false;
 		this.name = options.name;
+		this.persist = options.persist || false;
 
 		// Convert to array if not already.
 		this.fns = options.fn;
@@ -70,10 +71,15 @@
 			INIT : 1,
 			SCHEDULED : 2,
 			RUNNING : 3,
-			PAUSED : 4
+			PAUSED : 4,
+			STOPPED : 5
 		},
 
 		name : "",
+
+		// Whether it should continue running after removeAllJobs() and
+		// pauseAllJobs()
+		persist : false,
 
 		// Current state.
 		state : 1,
@@ -108,28 +114,39 @@
 		},
 
 		pause : function() {
-			log("Pausing job: " + this.name);
+			if (this.timerHandle) {
+				log("Pausing job: " + this.name);
 
-			this.timerHandle && clearInterval(this.timerHandle);
-			this.state = this.STATES.PAUSED;
+				clearInterval(this.timerHandle);
+				this.timerHandle = null;
+				this.state = this.STATES.PAUSED;
+			}
 		},
 
 		stop : function() {
-			log("Stopping job: " + this.name);
+			if (this.timerHandle) {
+				log("Stopping job: " + this.name);
 
-			this.timerHandle && clearInterval(this.timerHandle);
+				clearInterval(this.timerHandle);
+				this.timerHandle = null;
+				this.state = this.STATES.STOPPED;
+			}
 		},
 
 		start : function(immediate) {
-			log("Starting job: " + this.name);
+			if (this.timerHandle === null) {
+				log("Starting job: " + this.name);
 
-			var that = this;
-			this.timerHandle = setInterval(function() {
-				that.execute();
-			}, this.interval);
+				var that = this;
+				this.timerHandle = setInterval(function() {
+					that.execute();
+				}, this.interval);
 
-			this.state = this.STATES.SCHEDULED;
-			this.immediate && this.execute();
+				this.state = this.STATES.SCHEDULED;
+				this.immediate && this.execute();
+			} else {
+				log("Job already started: " + this.name);
+			}
 		}
 	};
 
@@ -190,24 +207,39 @@
 	};
 
 	/*
+	 * Simple helper function.
+	 */
+	var forEachJob = function(fn) {
+		for ( var jobName in jobs) {
+			fn(jobName, job);
+		}
+	};
+
+	/*
 	 * See JSDoc below.
 	 */
 	var removeAllJobs = function() {
-
+		forEachJob(function(name, job) {
+			!job.persist && removeJob(jobName);
+		});
 	};
 
 	/*
 	 * See JSDoc below.
 	 */
 	var pauseAllJobs = function() {
-
+		forEachJob(function(name, job) {
+			!job.persist && pauseJob(jobName);
+		});
 	};
 
 	/*
 	 * See JSDoc below.
 	 */
 	var resumeAllJobs = function() {
-
+		forEachJob(function(name, job) {
+			resumeJob(jobName);
+		});
 	};
 
 	/*
@@ -224,8 +256,8 @@
 		 *            Interval How often the job should run
 		 * 
 		 * @param options.fn
-		 *            Single function reference or array of references to be called
-		 *            when the timer fires.
+		 *            Single function reference or array of references to be
+		 *            called when the timer fires.
 		 * 
 		 * @param options.immediate
 		 *            Execute the function immediately.
@@ -235,24 +267,58 @@
 		 *            removeAllJobs() methods.
 		 * 
 		 * @param replace
-		 *            If a job by the name already exists, then replace it. Defaults
-		 *            to false.
+		 *            If a job by the name already exists, then replace it.
+		 *            Defaults to false.
 		 */
 		addJob : addJob,
-		
+
 		/**
 		 * Removes a job by name.
 		 * 
 		 * @param name
 		 *            Job name to remove
+		 * 
+		 * @returns True is successfully removed, false otherwise.
 		 */
 		removeJob : removeJob,
-		
+
+		/**
+		 * Immediately execute job.
+		 * 
+		 * @param name
+		 *            Job name to run
+		 */
 		runJob : runJob,
+
+		/**
+		 * Pause job from firing.
+		 * 
+		 * @param name
+		 *            Job name to pause
+		 */
 		pauseJob : pauseJob,
+
+		/**
+		 * Resume a paused job.
+		 * 
+		 * @param name
+		 *            Job name to pause
+		 */
 		resumeJob : resumeJob,
+
+		/**
+		 * Removes all jobs.
+		 */
 		removeAllJobs : removeAllJobs,
+
+		/**
+		 * Pauses all jobs.
+		 */
 		pauseAllJobs : pauseAllJobs,
+
+		/**
+		 * Resumes all jobs.
+		 */
 		resumeAllJobs : resumeAllJobs
 	};
 }));
