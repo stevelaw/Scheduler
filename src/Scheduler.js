@@ -1,4 +1,3 @@
-;
 /**
  * 
  */
@@ -96,9 +95,6 @@
 
 		// Callback(s)
 		fns : [],
-
-		// Whether the job should persist acrossed pauses and remove all calls.
-		persist : false,
 
 		// Interval at which the job is run.
 		interval : 0,
