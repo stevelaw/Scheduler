@@ -1,0 +1,6 @@
+{
+  "name": "Scheduler",
+  "description": "A simple job scheduler for managing periodic jobs.",
+  "version": "1.0.0",
+  "main": "src/Scheduler.js"
+}
