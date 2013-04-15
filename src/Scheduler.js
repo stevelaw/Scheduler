@@ -16,7 +16,7 @@
 	}
 }(this, function(options) {
 
-	var debug = options.debug || false;
+	var debug = (options && options.debug) ? options.debug : false;
 
 	/*
 	 * Log helper.
